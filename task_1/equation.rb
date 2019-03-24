@@ -12,7 +12,7 @@ elsif Discr > 0
   x1 = (-factor_b + Math.sqrt(Discr))/ (2 * factor_a)
   x2 = (-factor_b - Math.sqrt(Discr))/ (2 * factor_a)
   puts "Дискриминант = #{Discr} Корень1 = #{x1} Корень2 = #{x2}"
-else #Discr = 0
+else
   x1 = (-factor_b + Math.sqrt(Discr))/ (2 * factor_a)
   puts "Дискриминант = #{Discr} Корень = #{x1}"
 
