@@ -18,3 +18,4 @@ elsif side1 == side3
 else
   puts "Треугольник не прямоугольный"
 end
+

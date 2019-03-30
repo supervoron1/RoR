@@ -16,5 +16,5 @@ else #discr = 0
   square_root = Math.sqrt(discr)
   x1 = (-factor_b + square_root) / (2.0 * factor_a)
   puts "Дискриминант = #{discr} Корень = #{x1}"
-
 end
+
