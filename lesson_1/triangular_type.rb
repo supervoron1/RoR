@@ -4,15 +4,17 @@ puts "Введите длину стороны 2"
 side2 = gets.to_i
 puts "Введите длину стороны 3"
 side3 = gets.to_i
-puts "Имеем дело с: "
-if side1 <=0 || side2 <=0 || side3 <=0 || side1++side2 <= side3 || side1++side3 <= side2 || side3++side2 <= side1
-  puts "Несуществующим треугольником"
-elsif side1==side2 && side1==side3 && side2==side3
-  puts "Равносторонний"
-elsif side1==side2 && side1 !=side3 || side2==side3 && side3 !=side1 || side1==side3 && side1 !=side2
-  puts "Равнобедренный"
-elsif (side1**2) == ((side2**2) + (side3**2)) || (side2**2) == ((side1**2) + (side3**2)) || (side3**2) == ((side2**2) + (side1**2))
-  puts "Прямоугольный"
-elsif puts "Неравносторонним, неравнобедренным и не прямоугольным треугольником ))"
-  	
+cathetus1, cathetus2, hypotenuse =
+  [side1, side2, side3].sort!
+triangle_exists = cathetus1 + cathetus2 > hypotenuse
+abort('Tреугольник не существует') unless triangle_exists
+right_triangle = cathetus1**2 + cathetus2**2 == hypotenuse**2
+if right_triangle && side1 == side2
+  puts "Прямоугольный, Равнобедренный треугольник"
+elsif right_triangle
+  puts "Прямоугольный треугольник"
+elsif side1 == side3
+  puts "Pавносторонний, равнобедренный но не прямоугольный треугольник"
+else
+  puts "Треугольник не прямоугольный"
 end
