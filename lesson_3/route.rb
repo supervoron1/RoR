@@ -14,11 +14,12 @@ class Route
   end
 
   def remove_station(station)
-    @stations.delete(station)
+    unless [@stations.first, @stations.last].include?(station)
+      @stations.delete(station)
+    end
   end
 
   def stations
-    [@first_station, @stations, @last_station].flatten
+    [@first_station, *@stations, @last_station]
   end
-
 end

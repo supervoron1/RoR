@@ -21,57 +21,50 @@ class Train
     @speed = 0
   end
 
-  def wagon_action(action)
-    stop
-    if action == :add
-      @wagons += 1
-    elsif action == :remove
-      @wagons -= 1 unless @wagons == 0
-    end
+  def add_wagon
+    return unless @speed.zero?
+    @wagons += 1
   end
 
-  def set_route=(route)
-  	return unless route.class == Route
+  def remove_wagon
+    return unless @speed.zero?
+    @wagons -= 1 if @wagons > 0
+  end
 
+  def route=(route)
     @route = route
     @current_station_index = 0
-    @current_station = route.stations.first
     @current_station.add_train(self)
   end
 
-  def move_up
-    return unless @route.stations.size > @current_station_index + 1
-    move(next_station)
+  def current_station
+    @route.stations[@current_station_index]
   end
 
-  def move_back
-    return unless @current_station_index > 0
-    move(previous_station)
+  def move_to_next_station
+    return unless next_station
+    current_station.remove_train(self)
+    next_station.add_train(self)
+    @current_station_index += 1
   end
 
-  def move(to_station)
-    @current_station.remove_train(self)
-    to_station.add_train(self)
-    @current_station = to_station
-    @current_station_index = @route.stations.index(@current_station)
+  def move_to_prev_station
+    return unless prev_station
+    current_station.remove_train(self)
+    prev_station.add_train(self)
+    @current_station_index -= 1
   end
 
-  def stat
-    puts "Train № #{@number}, current speed: #{@speed}, type: #{@type}, number of wagons: #{@wagons}, current station: #{@current_station}"
-  end
-
-  def
-    locate
-    puts "Current station: #{@current_station}"
-  end
-
-  #protected
+  # def stat
+  #   puts "Train № #{@number}, current speed: #{@speed}, type: #{@type}, number of wagons: #{@wagons}, current station: #{@current_station}"
+  # end
 
   def next_station
     @route.stations[@current_station_index + 1]
   end
 
-  def previous_station
+  def prev_station
+    return unless @current_station_index > 0
     @route.stations[@current_station_index - 1]
   end
 
