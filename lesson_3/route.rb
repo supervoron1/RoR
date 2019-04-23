@@ -8,15 +8,13 @@ class Route
   end
 
   def add_station(station)
-    unless [@stations.first, @stations.last].include?(station)
-      @stations.push(station)
-    end
+    return if [@stations.first, @stations.last].include?(station)
+    @stations.push(station)
   end
 
   def remove_station(station)
-    unless [@stations.first, @stations.last].include?(station)
-      @stations.delete(station)
-    end
+    return if [@stations.first, @stations.last].include?(station)
+    @stations.delete(station)
   end
 
   def stations

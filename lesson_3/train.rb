@@ -1,5 +1,5 @@
 class Train
-  attr_reader :speed, :route, :wagons, :number, :type, :current_station
+  attr_reader :speed, :route, :wagons, :number, :type
 
   def initialize(number, type, wagons)
     @number = number
@@ -9,12 +9,13 @@ class Train
     @current_station_index = 0
   end
 
-  def speed_up
-    @speed += 5
+  def speed_up(speed)
+    @speed += speed
   end
 
-  def slow_down
-    @speed -= 5 unless @speed == 0
+  def slow_down(speed)
+    @speed -= speed
+    @speed = 0 if @speed < 0
   end
 
   def stop
@@ -34,7 +35,7 @@ class Train
   def route=(route)
     @route = route
     @current_station_index = 0
-    @current_station.add_train(self)
+    current_station.add_train(self)
   end
 
   def current_station
@@ -58,6 +59,8 @@ class Train
   # def stat
   #   puts "Train № #{@number}, current speed: #{@speed}, type: #{@type}, number of wagons: #{@wagons}, current station: #{@current_station}"
   # end
+
+  #protected
 
   def next_station
     @route.stations[@current_station_index + 1]
