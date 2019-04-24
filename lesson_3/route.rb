@@ -8,12 +8,12 @@ class Route
   end
 
   def add_station(station)
-    return if [@stations.first, @stations.last].include?(station)
+    return if [@first_station, @last_station].include?(station)
     @stations.push(station)
   end
 
   def remove_station(station)
-    return if [@stations.first, @stations.last].include?(station)
+    return if [@first_station, @last_station].include?(station)
     @stations.delete(station)
   end
 
