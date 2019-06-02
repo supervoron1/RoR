@@ -1,11 +1,11 @@
 class Train
-  attr_reader :speed, :route, :number, :type, :wagons
+  attr_reader :speed, :route, :number, :wagons, :type
 
   def initialize(number)
     @number = number
     @speed = 0
-    @wagons = wagons
     @type = type
+    @wagons = []
     @current_station_index = 0
   end
 
@@ -22,14 +22,15 @@ class Train
     @speed = 0
   end
 
-  def add_wagon
-    return unless @speed.zero?
-    @wagons += 1
+  def add_wagon(wagon)
+    @wagons << wagon
+
   end
 
-  def remove_wagon
-    return unless @speed.zero?
-    @wagons -= 1 if @wagons > 0
+  def remove_wagon(wagon)
+    unless @wagons.empty?
+      @wagons.delete(wagon)
+    end
   end
 
   def route=(route)
@@ -55,10 +56,6 @@ class Train
     prev_station.add_train(self)
     @current_station_index -= 1
   end
-
-  # def stat
-  #   puts "Train № #{@number}, current speed: #{@speed}, type: #{@type}, number of wagons: #{@wagons}, current station: #{@current_station}"
-  # end
 
   protected
 

@@ -1,6 +1,7 @@
 class CargoWagon < Wagon
+  #attr_accessor :type
+
   def initialize
-  	@type = :cargo
+    @type = 'cargo'
   end
 end
-

@@ -1,7 +1,8 @@
 class PassengerTrain < Train
+  
   def initialize(number)
     super
-    @type = :passenger
+    @type = 'passenger'
   end
-
+  
 end
