@@ -241,7 +241,7 @@ class Main
     end
     puts "Выберите поезд для работы"
     train = choose_train
-    train.wagons.remove_wagon(wagon)
+    train.remove_wagon(wagon)
     puts "Отцеплено от поезда № #{train.number}, Тип - #{train.type}"
     puts "#{train.wagons}"
   end
