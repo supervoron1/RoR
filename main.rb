@@ -130,18 +130,15 @@ class Main
 
       if train_type == 1
         @trains << PassengerTrain.new(train_number)
-
         puts "Пассажирский поезд '#{train_number}' создан."
       elsif train_type == 2
         @trains << CargoTrain.new(train_number)
-
         puts "Грузовой поезд '#{train_number}' создан."
       end
 
       break if [1, 2].include?(train_type)
     end
   end
-
 
   def select_from_collection(collection)
     index = gets.to_i - 1
@@ -160,7 +157,6 @@ class Main
     @routes << Route.new(route_from, route_to)
     puts "Создан маршрут: #{route_from.name} - #{route_to.name}."
   end
-
 
   def route_menu
     loop do
@@ -308,7 +304,6 @@ class Main
     generate_train
     puts "Trains and Stations are randomly generated"
   end
-
 end
 
 rr = Main.new
