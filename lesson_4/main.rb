@@ -90,7 +90,7 @@ class Main
     else
       @routes.each.with_index(1) do |route, index|
         route_stations = route.stations.map(&:name).join(' -> ')
-        puts "#{index} #{route_stations}"
+        puts "#{index} - #{route_stations}"
       end
     end
   end
@@ -134,7 +134,7 @@ class Main
         puts "Грузовой поезд '#{train_number}' создан."
       end
 
-      break #if [1, 2].include?(train_type)
+      break
     end
   end
 
@@ -153,7 +153,7 @@ class Main
     return if route_from.nil? || route_to.nil?
     return if route_from == route_to
     @routes << Route.new(route_from, route_to)
-    puts "Создан маршрут: #{route_from.name} - #{route_to.name}."
+    puts "Создан маршрут: #{route_from.name} -> #{route_to.name}."
   end
 
   def route_menu
@@ -180,10 +180,19 @@ class Main
     else
       puts "Выберите маршрут для редактирования"
       route = choose_route
+      if route.nil?
+        puts "Такого маршрута не существует!"
+        return
+      end
       puts "Введите номер станции которую вы хотите добавить в маршрут"
       puts_stations
       station = select_from_collection(@stations)
+      if station.nil?
+        puts "Такой станции не существует!"
+        return
+      end
       route.add_station(station)
+      puts "Добавлена станция #{station.name} в маршрут: #{route.stations.map(&:name).join(' -> ')}."
     end
   end
 
@@ -193,22 +202,37 @@ class Main
     else
       puts "Выберите маршрут для редактирования"
       route = choose_route
+      if route.nil?
+        puts "Такого маршрута не существует!"
+        return
+      end
       puts "Введите номер станции которую вы хотите удалить из маршрута"
       puts_stations
       station = select_from_collection(@stations)
+      if station.nil?
+        puts "Такой станции не существует!"
+        return
+      end
       route.remove_station(station)
+      puts "Удалена станция #{station.name} из маршрута: #{route.stations.map(&:name).join(' -> ')}."
     end
   end
 
   def set_route_to_train
     puts "Назначить маршрут:"
     train = choose_train
+    if train.nil?
+      puts "Такого поезда не существет!"
+      return
+    end
     puts "Выбран поезд '#{train.number}'"
-
     route = choose_route
-
+    if route.nil?
+      puts "Такого маршрута не существет!"
+      return
+    end
     train.route = route
-    puts "Поезду '#{train.number}' задан маршрут."
+    puts "Поезду '#{train.number}' задан маршрут #{route.stations.map(&:name).join(' -> ')}."
   end
 
   def add_wagon_to_train
@@ -224,8 +248,8 @@ class Main
     when PassengerTrain
       train.add_wagon(PassengerWagon.new)
     end
-    puts "Добавлено к поезду № #{train.number}, Тип - #{train.type}"
-    puts "#{train.wagons}"
+    puts "Добавлен вагон к поезду № #{train.number}, Тип - #{train.type}"
+    puts "Теперь у поезда #{train.wagons.size} вагон/ов"
   end
 
   def remove_wagon_from_train
@@ -235,9 +259,10 @@ class Main
     end
     puts "Выберите поезд для работы"
     train = choose_train
-    train.remove_wagon(@wagon.last)
-    puts "Отцеплено от поезда № #{train.number}, Тип - #{train.type}"
-    puts "#{train.wagons}"
+    wagon = train.wagons.last
+    train.remove_wagon(wagon)
+    puts "Отцеплен вагон от поезда № #{train.number}, Тип - #{train.type}"
+    puts "Теперь у поезда #{train.wagons.size} вагон/ов"
   end
 
   def move_train
@@ -264,7 +289,7 @@ class Main
     puts "Список станций и список поездов на станции:"
     station = choose_station
     puts "Список поездов на станции '#{station.name}':"
-    station.trains.each.with_index(1) { |train, index| puts "#{index} - #{train.number}" }
+    station.trains.each.with_index(1) { |train, index| puts "#{index} - #{train.number}, Тип - #{train.type}."}
   end
 
   def choose_station

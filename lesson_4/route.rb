@@ -20,4 +20,5 @@ class Route
   def stations
     [@first_station, *@stations, @last_station]
   end
+
 end
