@@ -89,10 +89,8 @@ class Main
       puts "Пока не заданы"
     else
       @routes.each.with_index(1) do |route, index|
-        # print "#{index} - "
-        # route.stations.each_with_index { |station, station_index| print " -> " if station_index > 0; print station.name }
-        print route.stations.map(&:name).join(' -> ')
-        print "\n"
+        route_stations = route.stations.map(&:name).join(' -> ')
+        puts "#{index} #{route_stations}"
       end
     end
   end
@@ -136,7 +134,7 @@ class Main
         puts "Грузовой поезд '#{train_number}' создан."
       end
 
-      break if [1, 2].include?(train_type)
+      break #if [1, 2].include?(train_type)
     end
   end
 
@@ -237,7 +235,7 @@ class Main
     end
     puts "Выберите поезд для работы"
     train = choose_train
-    train.remove_wagon(wagon)
+    train.remove_wagon(@wagon.last)
     puts "Отцеплено от поезда № #{train.number}, Тип - #{train.type}"
     puts "#{train.wagons}"
   end
@@ -278,13 +276,13 @@ class Main
   def choose_train
     puts_trains
     print "Выберите поезд из списка: "
-    @trains[gets.to_i - 1]
+    select_from_collection(@trains)
   end
 
   def choose_route
     puts_routes
     print "Выберите маршрут из списка: "
-    @routes[gets.to_i - 1]
+    select_from_collection(@routes)
   end
 
   def generate_station
@@ -294,11 +292,13 @@ class Main
     @stations << Station.new('s.petersburg')
     @stations << Station.new('pskov')
   end
+
   def generate_train
     @trains << PassengerTrain.new(999)
     @trains << PassengerTrain.new(555)
     @trains << CargoTrain.new(777)
   end
+
   def generate_data
     generate_station
     generate_train

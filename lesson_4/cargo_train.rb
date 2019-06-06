@@ -4,6 +4,7 @@ class CargoTrain < Train
     super
     @type = 'cargo'
   end
+  
   def attachable_wagon?(wagon)
   	wagon.is_a?(CargoWagon)
   end
