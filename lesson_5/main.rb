@@ -6,11 +6,8 @@ require_relative 'passenger_wagon'
 require_relative 'cargo_wagon'
 require_relative 'station'
 require_relative 'route'
-require_relative 'manufacturer'
 
 class Main
-  include Manufacturer
-
   attr_reader :trains
 
   MENU_ITEMS = [
@@ -58,7 +55,7 @@ class Main
       when 9 then browse_trains_in_station
       when 10 then statistics
       when 11 then generate_data
-      when 12 then show_stations_obj
+      when 12 then show_all_stations
       when 13 then find_train_by_number
       when 14 then register
       end
@@ -109,9 +106,9 @@ class Main
     puts_trains
   end
 
-  def show_stations_obj
+  def show_all_stations
     puts 'Созданы следующие объекты станций:'
-    Station.all
+    puts Station.all.map(&:name).join(', ')
   end
 
   protected

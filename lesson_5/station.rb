@@ -7,7 +7,7 @@ class Station
   @@stations = []
 
   def self.all
-    puts @@stations.map(&:name) #@@stations
+    @@stations
   end
 
   def initialize(name)
