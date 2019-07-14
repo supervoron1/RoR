@@ -13,7 +13,7 @@ class Route
   end
 
   def valid?
-    valid!
+    validate!
     true
   rescue StandardError
     false
