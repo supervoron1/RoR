@@ -12,9 +12,17 @@ class Station
 
   def initialize(name)
     @name = name
+    validate!
     @trains = []
     @@stations.push(self)
     register_instance
+  end
+
+  def valid?
+    validate!
+    true
+  rescue StandardError
+    false
   end
 
   def add_train(train)
@@ -29,4 +37,10 @@ class Station
     trains.select { |train| train.type == type }.length
   end
 
+  protected
+
+  def validate!
+    raise 'Станции не присвоено имя' if name.empty? || name.nil?
+    raise 'Слишком короткое имя станции. Должно быть не менее 3 символов' if name.length < 3
+  end
 end

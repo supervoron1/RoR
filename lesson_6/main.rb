@@ -76,15 +76,23 @@ class Main
 
   def puts_stations
     puts "Список станций:"
-    @stations.each.with_index(1) do |station, index|
-      puts "#{index} - #{station.name}"
+    if @stations.empty?
+      puts "Пока не заданы"
+    else
+      @stations.each.with_index(1) do |station, index|
+        puts "#{index} - #{station.name}"
+      end
     end
   end
 
   def puts_trains
     puts "Список поездов:"
-    @trains.each.with_index(1) do |train, index|
-      puts "#{index} - №#{train.number} - Тип: #{train.type}"
+    if @trains.empty?
+      puts "Пока не заданы"
+    else
+      @trains.each.with_index(1) do |train, index|
+        puts "#{index} - №#{train.number} - Тип: #{train.type}"
+      end
     end
   end
 
@@ -108,7 +116,14 @@ class Main
 
   def show_all_stations
     puts 'Созданы следующие объекты станций:'
+    if Station.all.empty?
+      puts 'Станции пока не созданы!'
+      return
+    end
     puts Station.all.map(&:name).join(', ')
+  rescue StandardError => e
+    puts e
+
   end
 
   protected
@@ -117,10 +132,11 @@ class Main
     puts "Создать станцию:"
     print "Название: "
     station_name = gets.chomp
-
     @stations << Station.new(station_name)
-
     puts "Станция '#{station_name}' создана."
+  rescue StandardError => e
+    puts e
+    retry
   end
 
   def create_train
@@ -143,9 +159,11 @@ class Main
         @trains << CargoTrain.new(train_number)
         puts "Грузовой поезд '#{train_number}' создан."
       end
-
       break
     end
+  rescue StandardError => e
+    puts e
+    retry
   end
 
   def select_from_collection(collection)
@@ -155,15 +173,24 @@ class Main
   end
 
   def create_route
-    puts_stations
-    puts "Выберите начальную станцию"
-    route_from = select_from_collection(@stations)
-    puts "Выберите конечную станцию"
-    route_to = select_from_collection(@stations)
-    return if route_from.nil? || route_to.nil?
-    return if route_from == route_to
-    @routes << Route.new(route_from, route_to)
-    puts "Создан маршрут: #{route_from.name} -> #{route_to.name}."
+    if @stations.length >= 2
+      puts_stations
+      puts "Выберите начальную станцию"
+      route_from = select_from_collection(@stations)
+      puts "Выберите конечную станцию"
+      route_to = select_from_collection(@stations)
+      #return if route_from.nil? || route_to.nil?   # made via exceptions now
+      #return if route_from == route_to
+      @routes << Route.new(route_from, route_to)
+
+      puts "Создан маршрут: #{route_from.name} -> #{route_to.name}."
+
+    else
+      puts 'Сначала создайте станции, чтобы создавать маршруты (не менее 2)'
+    end
+  rescue StandardError => e
+    puts e
+    retry
   end
 
   def route_menu
@@ -186,7 +213,7 @@ class Main
 
   def add_extra_station
     if @routes.empty?
-      puts "Сначала создайте маршрут"
+      puts "Сначала создайте маршрут!"
     else
       puts "Выберите маршрут для редактирования"
       route = choose_route
@@ -208,7 +235,7 @@ class Main
 
   def remove_extra_station
     if @routes.empty?
-      puts "Сначала создайте маршрут"
+      puts "Сначала создайте маршрут!"
     else
       puts "Выберите маршрут для редактирования"
       route = choose_route
@@ -230,6 +257,10 @@ class Main
 
   def set_route_to_train
     puts "Назначить маршрут:"
+    if @routes.empty?
+      puts 'Сначала создайте маршрут!'
+      return
+    end
     train = choose_train
     if train.nil?
       puts "Такого поезда не существет!"
@@ -276,6 +307,10 @@ class Main
   end
 
   def move_train
+    if @trains.empty?
+      puts 'Сначала создайте поезд!'
+      return
+    end
     puts "Переместить поезд по маршруту:"
     train = choose_train
 
@@ -297,6 +332,10 @@ class Main
 
   def browse_trains_in_station
     puts "Список станций и список поездов на станции:"
+    if @stations.empty?
+      puts 'Станции пока не заданы'
+      return
+    end
     station = choose_station
     puts "Список поездов на станции '#{station.name}':"
     station.trains.each.with_index(1) { |train, index| puts "#{index} - #{train.number}, Тип - #{train.type}."}
@@ -352,9 +391,9 @@ class Main
   end
 
   def generate_train
-    @trains << PassengerTrain.new('999')
-    @trains << PassengerTrain.new('555')
-    @trains << CargoTrain.new('777')
+    @trains << PassengerTrain.new('999-PS')
+    @trains << PassengerTrain.new('555-PS')
+    @trains << CargoTrain.new('777-CG')
   end
 
   def generate_data
