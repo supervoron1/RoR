@@ -1,6 +1,9 @@
 require_relative 'instance_counter'
 
 class Station
+  EMPTY_NAME_ERROR = 'Станции не присвоено имя'
+  INVALID_NAME_ERROR = 'Слишком короткое имя станции. Должно быть не менее 3 символов'
+
   include InstanceCounter
   attr_reader :name, :trains
 
@@ -40,7 +43,7 @@ class Station
   protected
 
   def validate!
-    raise 'Станции не присвоено имя' if name.empty?
-    raise 'Слишком короткое имя станции. Должно быть не менее 3 символов' if name.length < 3
+    raise EMPTY_NAME_ERROR if name.empty?
+    raise INVALID_NAME_ERROR if name.length < 3
   end
 end

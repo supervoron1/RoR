@@ -8,6 +8,8 @@ class Train
   attr_reader :speed, :route, :number, :wagons, :type
 
   TRAIN_NUM_FORMAT = /^[0-9a-zа-я]{3}-?[0-9a-zа-я]{2}$/i
+  TRAIN_NUM_FORMAT_ERROR = 'Номер поезда введен в неверном формате (xxx-xx).'
+  TRAIN_TYPE_ERROR = 'Указан неверный тип поезда. Попробуйте еще раз.'
 
   @@trains = {}
 
@@ -19,7 +21,7 @@ class Train
     @@trains
   end
 
-  def initialize(number)
+  def initialize(number, type)
     @number = number
     validate!
     @speed = 0
@@ -89,8 +91,8 @@ class Train
   protected
 
   def validate!
-    raise 'Номер поезда введен в неверном формате (xxx-xx).' if number !~ TRAIN_NUM_FORMAT
-    
+    raise TRAIN_NUM_FORMAT_ERROR if number !~ TRAIN_NUM_FORMAT
+    raise TRAIN_TYPE_ERROR if self.class.nil?
   end
 
   def next_station

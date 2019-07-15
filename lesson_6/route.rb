@@ -1,13 +1,17 @@
 require_relative 'instance_counter'
 
 class Route
+  FIRST_STATION_MISSING_ERROR = 'Не задана начальная станция! Попробуйте еще раз.'
+  LAST_STATION_MISSING_ERROR = 'Не задана конечная станция! Попробуйте еще раз.'
+  INVALID_STATIONS_INROUTE = 'Начальная и конечная станции не должны быть одинаковыми.'
+
   include InstanceCounter
   attr_reader :stations, :first_station, :last_station
 
   def initialize(first_station, last_station)
-    validate!(first_station, last_station)
     @first_station = first_station
     @last_station = last_station
+    validate!
     @stations = []
     register_instance
   end
@@ -35,10 +39,9 @@ class Route
 
   protected
 
-  def validate!(first_station, last_station)
-    raise 'Не задана начальная станция! Попробуйте еще раз.' if first_station.nil?
-    raise 'Не задана конечная станция! Попробуйте еще раз.' if last_station.nil?
-    raise 'Начальная и конечная станции не должны быть одинаковыми' if first_station == last_station
-    #raise 'Сначала создайте маршрут! ===>' if @route.nil?
+  def validate!
+    raise FIRST_STATION_MISSING_ERROR if first_station.nil?
+    raise LAST_STATION_MISSING_ERROR if last_station.nil?
+    raise INVALID_STATIONS_INROUTE if first_station == last_station
   end
 end

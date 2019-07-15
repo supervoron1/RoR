@@ -1,8 +1,8 @@
 class CargoTrain < Train
   
   def initialize(number)
-    super
-    @type = 'cargo'
+    super(number, :cargo)
+    #@type = 'cargo'  #passed it to parent class via symbol
     validate!
   end
   
