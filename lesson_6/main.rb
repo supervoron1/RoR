@@ -8,6 +8,8 @@ require_relative 'station'
 require_relative 'route'
 
 class Main
+  INDEX_ERROR = 'Вы ввели недопустимое значение. Попробуйте еще раз.'
+
   attr_reader :trains
 
   TRAIN_TYPE_MENU = ['Пассажирский', 'Грузовой']
@@ -144,19 +146,16 @@ class Main
     retry
   end
 
-  # def create_train    #method's been refactored
+  # def create_train    # METHOD'S BEEN REFACTORED
   #   loop do
   #     puts "Создать поезд:"
   #     puts "1 - Пассажирский"
   #     puts "2 - Грузовой"
   #     print "Тип: "
   #     train_type = gets.to_i
-
   #     next unless [1, 2].include?(train_type)
-
   #     print "Номер поезда: "
   #     train_number = gets.chomp
-
   #     if train_type == 1
   #       @trains << PassengerTrain.new(train_number)
   #       puts "Пассажирский поезд '#{train_number}' создан."
@@ -173,7 +172,6 @@ class Main
 
   def create_train
     puts_separator
-    
     show_train_type_menu
     print 'Какой тип поезда хотите создать: '
     train_type = select_from_collection([PassengerTrain, CargoTrain])
@@ -181,13 +179,14 @@ class Main
     train_number = gets.chomp
     @trains << train_type.new(train_number)
     puts "Создан поезд №#{train_number}, Тип: #{train_type}"
-    rescue StandardError => e
-      puts e
-      retry
+  rescue StandardError => e
+    puts e
+    retry
   end
 
   def select_from_collection(collection)
     index = gets.to_i - 1
+    raise INDEX_ERROR if index > collection.length - 1
     return if index.negative?
     collection[index]
   end
@@ -199,7 +198,7 @@ class Main
       route_from = select_from_collection(@stations)
       puts "Выберите конечную станцию"
       route_to = select_from_collection(@stations)
-      #return if route_from.nil? || route_to.nil?   # made via exceptions now
+      #return if route_from.nil? || route_to.nil?   # MADE VIA EXCEPTIONS
       #return if route_from == route_to
       @routes << Route.new(route_from, route_to)
       puts "Создан маршрут: #{route_from.name} -> #{route_to.name}."

@@ -9,8 +9,7 @@ class Train
 
   TRAIN_NUM_FORMAT = /^[0-9a-zа-я]{3}-?[0-9a-zа-я]{2}$/i
   TRAIN_NUM_FORMAT_ERROR = 'Номер поезда введен в неверном формате (xxx-xx).'
-  TRAIN_TYPE_ERROR = 'Указан неверный тип поезда. Попробуйте еще раз.'
-
+  
   @@trains = {}
 
   def self.find_by_number(number)
@@ -92,7 +91,6 @@ class Train
 
   def validate!
     raise TRAIN_NUM_FORMAT_ERROR if number !~ TRAIN_NUM_FORMAT
-    raise TRAIN_TYPE_ERROR if self.class.nil?
   end
 
   def next_station
