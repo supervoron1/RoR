@@ -186,8 +186,7 @@ class Main
 
   def select_from_collection(collection)
     index = gets.to_i - 1
-    raise INDEX_ERROR if index > collection.length - 1
-    return if index.negative?
+    raise INDEX_ERROR unless index.between?(0, collection.size - 1)
     collection[index]
   end
 
@@ -234,17 +233,8 @@ class Main
     else
       puts "Выберите маршрут для редактирования"
       route = choose_route
-      if route.nil?
-        puts "Такого маршрута не существует!"
-        return
-      end
       puts "Введите номер станции которую вы хотите добавить в маршрут"
-      puts_stations
-      station = select_from_collection(@stations)
-      if station.nil?
-        puts "Такой станции не существует!"
-        return
-      end
+      station = choose_station
       route.add_station(station)
       puts "Добавлена станция #{station.name} в маршрут: #{route.stations.map(&:name).join(' -> ')}."
     end
@@ -256,17 +246,8 @@ class Main
     else
       puts "Выберите маршрут для редактирования"
       route = choose_route
-      if route.nil?
-        puts "Такого маршрута не существует!"
-        return
-      end
       puts "Введите номер станции которую вы хотите удалить из маршрута"
-      puts_stations
-      station = select_from_collection(@stations)
-      if station.nil?
-        puts "Такой станции не существует!"
-        return
-      end
+      station = choose_station
       route.remove_station(station)
       puts "Удалена станция #{station.name} из маршрута: #{route.stations.map(&:name).join(' -> ')}."
     end
@@ -274,21 +255,13 @@ class Main
 
   def set_route_to_train
     puts "Назначить маршрут:"
-    if @routes.empty?
-      puts 'Сначала создайте маршрут!'
+    if @routes.empty? && @trains.empty?
+      puts 'Сначала создайте маршрут и поезд!'
       return
     end
     train = choose_train
-    if train.nil?
-      puts "Такого поезда не существет!"
-      return
-    end
     puts "Выбран поезд '#{train.number}'"
     route = choose_route
-    if route.nil?
-      puts "Такого маршрута не существет!"
-      return
-    end
     train.route = route
     puts "Поезду '#{train.number}' задан маршрут #{route.stations.map(&:name).join(' -> ')}."
   end
@@ -385,18 +358,27 @@ class Main
     puts_stations
     print "Выберите станцию из списка: "
     select_from_collection(@stations)
+  rescue StandardError => e
+    puts e
+    retry
   end
 
   def choose_train
     puts_trains
     print "Выберите поезд из списка: "
     select_from_collection(@trains)
+  rescue StandardError => e
+    puts e
+    retry
   end
 
   def choose_route
     puts_routes
     print "Выберите маршрут из списка: "
     select_from_collection(@routes)
+  rescue StandardError => e
+    puts e
+    retry
   end
 
   def generate_station
