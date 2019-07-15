@@ -6,6 +6,10 @@ class Train
   include InstanceCounter
 
   attr_reader :speed, :route, :number, :wagons, :type
+
+  TRAIN_NUM_FORMAT = /^[0-9a-zа-я]{3}-?[0-9a-zа-я]{2}$/i
+  TRAIN_NUM_FORMAT_ERROR = 'Номер поезда введен в неверном формате (xxx-xx).'
+  
   @@trains = {}
 
   def self.find_by_number(number)
@@ -16,14 +20,22 @@ class Train
     @@trains
   end
 
-  def initialize(number)
+  def initialize(number, type)
     @number = number
+    validate!
     @speed = 0
     @type = type
     @wagons = []
     @current_station_index = 0
     @@trains[number] = self
     register_instance
+  end
+
+  def valid?
+    validate!
+    true
+  rescue StandardError
+    false
   end
 
   def speed_up(speed)
@@ -76,6 +88,10 @@ class Train
   end
 
   protected
+
+  def validate!
+    raise TRAIN_NUM_FORMAT_ERROR if number !~ TRAIN_NUM_FORMAT
+  end
 
   def next_station
     @route.stations[@current_station_index + 1]

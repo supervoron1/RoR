@@ -1,6 +1,9 @@
 require_relative 'instance_counter'
 
 class Station
+  EMPTY_NAME_ERROR = 'Станции не присвоено имя'
+  INVALID_NAME_ERROR = 'Слишком короткое имя станции. Должно быть не менее 3 символов'
+
   include InstanceCounter
   attr_reader :name, :trains
 
@@ -12,9 +15,17 @@ class Station
 
   def initialize(name)
     @name = name
+    validate!
     @trains = []
     @@stations.push(self)
     register_instance
+  end
+
+  def valid?
+    validate!
+    true
+  rescue StandardError
+    false
   end
 
   def add_train(train)
@@ -29,4 +40,10 @@ class Station
     trains.select { |train| train.type == type }.length
   end
 
+  protected
+
+  def validate!
+    raise EMPTY_NAME_ERROR if name.empty?
+    raise INVALID_NAME_ERROR if name.length < 3
+  end
 end
