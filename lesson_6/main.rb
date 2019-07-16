@@ -255,7 +255,7 @@ class Main
 
   def set_route_to_train
     puts "Назначить маршрут:"
-    if @routes.empty? && @trains.empty?
+    if @routes.empty? || @trains.empty?
       puts 'Сначала создайте маршрут и поезд!'
       return
     end
