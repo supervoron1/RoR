@@ -9,19 +9,25 @@ require_relative 'route'
 
 class Main
   INDEX_ERROR = 'Вы ввели недопустимое значение. Попробуйте еще раз.'
+  WAGON_NUMBER_ERROR = 'Номер вагона введен в неверном формате (99-С).'
+  NOT_DEFINED_ERROR = 'Пока не созданы.'
+  WAGON_NUM_FORMAT = /^[0-9]{2}-?[a-zа-я]{1}$/i
 
   attr_reader :trains
+  attr_writer :wagons
 
   TRAIN_TYPE_MENU = ['Пассажирский', 'Грузовой']
 
   MENU_ITEMS = [
     "Создавать станции",
     "Создавать поезда",
+    "Создавать вагоны",
     "Создавать маршруты",
     "Управлять станциями в маршруте (добавлять, удалять)",
     "Назначать маршрут поезду",
     "Добавлять вагоны к поезду",
     "Отцеплять вагоны от поезда",
+    "Занять объем/место в вагоне",
     "Перемещать поезд по маршруту вперед и назад",
     "Просматривать список станций и список поездов на станции",
     "Посмотреть все станции, поезда и список созданных маршрутов",
@@ -50,18 +56,20 @@ class Main
       case selected_menu
       when 1 then create_station
       when 2 then create_train
-      when 3 then create_route
-      when 4 then route_menu
-      when 5 then set_route_to_train
-      when 6 then add_wagon_to_train
-      when 7 then remove_wagon_from_train
-      when 8 then move_train
-      when 9 then browse_trains_in_station
-      when 10 then statistics
-      when 11 then generate_data
-      when 12 then show_all_stations
-      when 13 then find_train_by_number
-      when 14 then register
+      when 3 then create_wagon
+      when 4 then create_route
+      when 5 then route_menu
+      when 6 then set_route_to_train
+      when 7 then add_wagon_to_train
+      when 8 then remove_wagon_from_train
+      when 9 then occupy_wagon
+      when 10 then move_train
+      when 11 then browse_trains_in_station
+      when 12 then statistics
+      when 13 then generate_data
+      when 14 then show_all_stations
+      when 15 then find_train_by_number
+      when 16 then register
       end
     end
   end
@@ -86,35 +94,34 @@ class Main
 
   def puts_stations
     puts "Список станций:"
-    if @stations.empty?
-      puts "Пока не заданы"
-    else
-      @stations.each.with_index(1) do |station, index|
-        puts "#{index} - #{station.name}"
-      end
+    puts NOT_DEFINED_ERROR if @stations.empty?
+    @stations.each.with_index(1) do |station, index|
+      puts "#{index} - #{station.name}"
     end
   end
 
   def puts_trains
     puts "Список поездов:"
-    if @trains.empty?
-      puts "Пока не заданы"
-    else
-      @trains.each.with_index(1) do |train, index|
-        puts "#{index} - №#{train.number} - Тип: #{train.type}"
-      end
+    puts NOT_DEFINED_ERROR if @trains.empty?
+    @trains.each.with_index(1) do |train, index|
+      puts "#{index} - №#{train.number} - Тип: #{train.type} - Вагоны: №№ #{train.wagons.map(&:number).join(',')}"
     end
   end
 
   def puts_routes
     puts "Список маршрутов:"
-    if @routes.empty?
-      puts "Пока не заданы"
-    else
-      @routes.each.with_index(1) do |route, index|
-        route_stations = route.stations.map(&:name).join(' -> ')
-        puts "#{index} - #{route_stations}"
-      end
+    puts NOT_DEFINED_ERROR if @routes.empty?
+    @routes.each.with_index(1) do |route, index|
+      route_stations = route.stations.map(&:name).join(' -> ')
+      puts "#{index} - #{route_stations}"
+    end
+  end
+
+  def puts_wagons
+    puts 'Список вагонов:'
+    puts NOT_DEFINED_ERROR if @wagons.empty?
+    @wagons.each.with_index(1) do |wagon, index|
+      puts "#{index} - №#{wagon.number} - Тип: #{wagon.type} - Объем: (free/total) #{wagon.free_volume}/#{wagon.capacity}"
     end
   end
 
@@ -122,14 +129,12 @@ class Main
     puts_routes
     puts_stations
     puts_trains
+    puts_wagons
   end
 
   def show_all_stations
     puts 'Созданы следующие объекты станций:'
-    if Station.all.empty?
-      puts 'Станции пока не созданы!'
-      return
-    end
+    puts NOT_DEFINED_ERROR if Station.all.empty?
     puts Station.all.map(&:name).join(', ')
   end
 
@@ -145,30 +150,6 @@ class Main
     puts e
     retry
   end
-
-  # def create_train    # METHOD'S BEEN REFACTORED
-  #   loop do
-  #     puts "Создать поезд:"
-  #     puts "1 - Пассажирский"
-  #     puts "2 - Грузовой"
-  #     print "Тип: "
-  #     train_type = gets.to_i
-  #     next unless [1, 2].include?(train_type)
-  #     print "Номер поезда: "
-  #     train_number = gets.chomp
-  #     if train_type == 1
-  #       @trains << PassengerTrain.new(train_number)
-  #       puts "Пассажирский поезд '#{train_number}' создан."
-  #     elsif train_type == 2
-  #       @trains << CargoTrain.new(train_number)
-  #       puts "Грузовой поезд '#{train_number}' создан."
-  #     end
-  #     break
-  #   end
-  # rescue StandardError => e
-  #   puts e
-  #   retry
-  # end
 
   def create_train
     puts_separator
@@ -197,13 +178,29 @@ class Main
       route_from = select_from_collection(@stations)
       puts "Выберите конечную станцию"
       route_to = select_from_collection(@stations)
-      #return if route_from.nil? || route_to.nil?   # MADE VIA EXCEPTIONS
-      #return if route_from == route_to
       @routes << Route.new(route_from, route_to)
       puts "Создан маршрут: #{route_from.name} -> #{route_to.name}."
     else
       puts 'Сначала создайте станции, чтобы создавать маршруты (не менее 2)'
     end
+  rescue StandardError => e
+    puts e
+    retry
+  end
+
+  def create_wagon
+    puts_separator
+    show_train_type_menu
+    print 'Какой тип вагона хотите создать: '
+    wagon_type = select_from_collection([PassengerWagon, CargoWagon])
+    print "Номер вагона: "
+    wagon_number = gets.chomp
+    raise WAGON_NUMBER_ERROR if wagon_number !~ WAGON_NUM_FORMAT
+    print 'Задайте объем вагона: '
+    wagon_capacity = gets.to_i
+    raise INDEX_ERROR if wagon_capacity <= 0
+    @wagons << wagon_type.new(wagon_number, wagon_capacity)
+    puts "Создан вагон №#{wagon_number}, Тип: #{wagon_type}, Свободный объем: #{wagon_capacity}"
   rescue StandardError => e
     puts e
     retry
@@ -271,16 +268,19 @@ class Main
       puts "Сначала создайте поезд!"
       return
     end
+    puts_separator
     puts "Выберите поезд для работы"
     train = choose_train
-    case train
-    when CargoTrain
-      train.add_wagon(CargoWagon.new)
-    when PassengerTrain
-      train.add_wagon(PassengerWagon.new)
-    end
-    puts "Добавлен вагон к поезду № #{train.number}, Тип - #{train.type}"
+    puts 'Выберите вагон для работы'
+    wagon = choose_wagon
+    raise INDEX_ERROR unless train.attachable_wagon?(wagon)
+    train.add_wagon(wagon)
+    puts "К поезду № #{train.number} добавлен вагон № #{wagon.number}, Тип - #{wagon.type}, Общий объем - #{wagon.capacity}"
     puts "Теперь у поезда #{train.wagons.size} вагон/ов"
+    p @trains
+  rescue StandardError => e
+    puts e
+    retry
   end
 
   def remove_wagon_from_train
@@ -294,6 +294,31 @@ class Main
     train.remove_wagon(wagon)
     puts "Отцеплен вагон от поезда № #{train.number}, Тип - #{train.type}"
     puts "Теперь у поезда #{train.wagons.size} вагон/ов"
+  end
+
+  def occupy_wagon
+    puts 'Выберите вагон для работы'
+    wagon = choose_wagon
+    occupy_passenger_wagon(wagon) if wagon.is_a?(PassengerWagon)
+    occupy_cargo_wagon(wagon) if wagon.is_a?(CargoWagon)
+  end
+
+  def occupy_passenger_wagon(wagon)
+    raise INDEX_ERROR unless wagon.has_free_volume?
+    wagon.take_seat
+    puts "Занято 1 место в вагоне №#{wagon.number}. Свободных мест: #{wagon.free_volume}"
+  rescue StandardError => e
+    puts e
+  end
+
+  def occupy_cargo_wagon(wagon)
+    puts 'Введите объем загрузки'
+    volume = gets.to_i
+    raise INDEX_ERROR unless volume <= wagon.free_volume
+    wagon.take_volume(volume)
+    puts "Загружен объем: #{volume} в вагон №#{wagon.number}. Свободный объем: #{wagon.free_volume}"
+  rescue StandardError => e
+    puts e
   end
 
   def move_train
@@ -328,7 +353,8 @@ class Main
     end
     station = choose_station
     puts "Список поездов на станции '#{station.name}':"
-    station.trains.each.with_index(1) { |train, index| puts "#{index} - #{train.number}, Тип - #{train.type}."}
+    station.each_train { |train| puts "#{train.number}, Тип - #{train.type}."} # замена by bloc 'each_train'
+    #station.trains.each.with_index(1) { |train, index| puts "#{index} - #{train.number}, Тип - #{train.type}."}
   end
 
   def find_train_by_number
@@ -381,6 +407,15 @@ class Main
     retry
   end
 
+  def choose_wagon
+    puts_wagons
+    print "Выберите вагон из списка: "
+    select_from_collection(@wagons)
+  rescue StandardError => e
+    puts e
+    retry
+  end
+
   def generate_station
     @stations << Station.new('moscow')
     @stations << Station.new('samara')
@@ -395,10 +430,18 @@ class Main
     @trains << CargoTrain.new('777-CG')
   end
 
+  def generate_wagons
+    @wagons << PassengerWagon.new('11-P', 3)
+    @wagons << PassengerWagon.new('99-P', 5)
+    @wagons << CargoWagon.new('22-C', 220)
+    @wagons << CargoWagon.new('55-C', 550)
+  end
+
   def generate_data
     generate_station
     generate_train
-    puts "Trains and Stations are randomly generated"
+    generate_wagons
+    puts "Trains, Wagons and Stations are randomly generated"
   end
 end
 

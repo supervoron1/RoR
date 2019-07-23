@@ -9,7 +9,7 @@ class Train
 
   TRAIN_NUM_FORMAT = /^[0-9a-zа-я]{3}-?[0-9a-zа-я]{2}$/i
   TRAIN_NUM_FORMAT_ERROR = 'Номер поезда введен в неверном формате (xxx-xx).'
-  
+
   @@trains = {}
 
   def self.find_by_number(number)
@@ -36,6 +36,10 @@ class Train
     true
   rescue StandardError
     false
+  end
+
+  def each_wagon
+    @wagons.each.with_index(1) { |wagon, index| yield(wagon, index) } if block_given?
   end
 
   def speed_up(speed)
