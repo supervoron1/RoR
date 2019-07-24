@@ -273,7 +273,6 @@ class Main
     train.add_wagon(wagon)
     puts "К поезду № #{train.number} добавлен вагон № #{wagon.number}, Тип - #{wagon.type}, Общий объем - #{wagon.capacity}"
     puts "Теперь у поезда #{train.wagons.size} вагон/ов"
-    p @trains
   rescue StandardError => e
     puts e
     retry
