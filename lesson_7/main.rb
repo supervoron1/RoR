@@ -9,9 +9,7 @@ require_relative 'route'
 
 class Main
   INDEX_ERROR = 'Вы ввели недопустимое значение. Попробуйте еще раз.'
-  WAGON_NUMBER_ERROR = 'Номер вагона введен в неверном формате (99-С).'
   NOT_DEFINED_ERROR = 'Пока не созданы.'
-  WAGON_NUM_FORMAT = /^[0-9]{2}-?[a-zа-я]{1}$/i
 
   attr_reader :trains
   attr_writer :wagons
@@ -195,10 +193,8 @@ class Main
     wagon_type = select_from_collection([PassengerWagon, CargoWagon])
     print "Номер вагона: "
     wagon_number = gets.chomp
-    raise WAGON_NUMBER_ERROR if wagon_number !~ WAGON_NUM_FORMAT
     print 'Задайте объем вагона: '
     wagon_capacity = gets.to_i
-    raise INDEX_ERROR if wagon_capacity <= 0
     @wagons << wagon_type.new(wagon_number, wagon_capacity)
     puts "Создан вагон №#{wagon_number}, Тип: #{wagon_type}, Свободный объем: #{wagon_capacity}"
   rescue StandardError => e
