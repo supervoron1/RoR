@@ -18,6 +18,10 @@ class Wagon
     @taken_volume = 0
   end
 
+  def take_volume(volume)
+    @taken_volume += volume
+  end
+
   def free_volume
     @capacity - @taken_volume
   end

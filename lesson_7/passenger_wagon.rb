@@ -4,8 +4,10 @@ class PassengerWagon < Wagon
     super(number, capacity, :'passenger')
   end
 
-  def take_seat
-    @taken_volume += 1
+  def take_volume
+    super(1)
   end
+
+  alias take_seat take_volume
 
 end
