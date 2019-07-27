@@ -1,5 +1,7 @@
-require_relative 'manufacturer'
-require_relative 'instance_counter'
+# frozen_string_literal: true
+
+require_relative "manufacturer"
+require_relative "instance_counter"
 
 class Train
   include Manufacturer
@@ -8,7 +10,7 @@ class Train
   attr_reader :speed, :route, :number, :wagons, :type
 
   TRAIN_NUM_FORMAT = /^[0-9a-zа-я]{3}-?[0-9a-zа-я]{2}$/i
-  TRAIN_NUM_FORMAT_ERROR = 'Номер поезда введен в неверном формате (xxx-xx).'
+  TRAIN_NUM_FORMAT_ERROR = "Номер поезда введен в неверном формате (xxx-xx)."
 
   @@trains = {}
 
@@ -48,7 +50,7 @@ class Train
 
   def slow_down(speed)
     @speed -= speed
-    @speed = 0 if @speed < 0
+    @speed = 0 if @speed.negative?
   end
 
   def stop
@@ -65,7 +67,6 @@ class Train
     return unless speed.zero?
     @wagons.delete(wagon)
   end
-
 
   def route=(route)
     @route = route
@@ -102,8 +103,7 @@ class Train
   end
 
   def prev_station
-    return unless @current_station_index > 0
+    return unless @current_station_index.positive?
     @route.stations[@current_station_index - 1]
   end
-
 end

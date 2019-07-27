@@ -1,8 +1,10 @@
-require_relative 'instance_counter'
+# frozen_string_literal: true
+
+require_relative "instance_counter"
 
 class Station
-  EMPTY_NAME_ERROR = 'Станции не присвоено имя'
-  INVALID_NAME_ERROR = 'Слишком короткое имя станции. Должно быть не менее 3 символов'
+  EMPTY_NAME_ERROR = "Станции не присвоено имя"
+  INVALID_NAME_ERROR = "Слишком короткое имя станции. Должно быть не менее 3 символов"
 
   include InstanceCounter
   attr_reader :name, :trains

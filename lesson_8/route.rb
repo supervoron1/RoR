@@ -1,12 +1,14 @@
-require_relative 'instance_counter'
+# frozen_string_literal: true
+
+require_relative "instance_counter"
 
 class Route
-  FIRST_STATION_MISSING_ERROR = 'Не задана начальная станция! Попробуйте еще раз.'
-  LAST_STATION_MISSING_ERROR = 'Не задана конечная станция! Попробуйте еще раз.'
-  INVALID_STATIONS_INROUTE = 'Начальная и конечная станции не должны быть одинаковыми.'
+  FIRST_STATION_MISSING_ERROR = "Не задана начальная станция! Попробуйте еще раз."
+  LAST_STATION_MISSING_ERROR = "Не задана конечная станция! Попробуйте еще раз."
+  INVALID_STATIONS_INROUTE = "Начальная и конечная станции не должны быть одинаковыми."
 
   include InstanceCounter
-  attr_reader :stations, :first_station, :last_station
+  attr_reader :first_station, :last_station
 
   def initialize(first_station, last_station)
     @first_station = first_station
