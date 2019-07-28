@@ -1,7 +1,8 @@
-class PassengerWagon < Wagon
+# frozen_string_literal: true
 
+class PassengerWagon < Wagon
   def initialize(number, capacity)
-    super(number, capacity, :'passenger')
+    super(number, capacity, :passenger)
   end
 
   def take_volume
@@ -9,5 +10,4 @@ class PassengerWagon < Wagon
   end
 
   alias take_seat take_volume
-
 end
