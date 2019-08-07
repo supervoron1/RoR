@@ -12,8 +12,8 @@ class Station
   include Validation
 
   attr_reader :name, :trains
-  validate :name, :validate_presence
-  validate :name, :validate_format, STATION_NAME_FORMAT
+  validate :name, :presence
+  validate :name, :format, STATION_NAME_FORMAT
 
   @@stations = []
 
