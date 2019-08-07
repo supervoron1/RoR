@@ -1,13 +1,19 @@
 # frozen_string_literal: true
 
 require_relative "instance_counter"
+require_relative "validation"
 
 class Station
   EMPTY_NAME_ERROR = "Станции не присвоено имя"
   INVALID_NAME_ERROR = "Слишком короткое имя станции. Должно быть не менее 3 символов"
+  STATION_NAME_FORMAT = /^.{3,}$/i
 
   include InstanceCounter
+  include Validation
+
   attr_reader :name, :trains
+  validate :name, :validate_presence
+  validate :name, :validate_format, STATION_NAME_FORMAT
 
   @@stations = []
 
@@ -46,10 +52,10 @@ class Station
     trains.select { |train| train.type == type }.length
   end
 
-  protected
+  # protected
 
-  def validate!
-    raise EMPTY_NAME_ERROR if name.empty?
-    raise INVALID_NAME_ERROR if name.length < 3
-  end
+  # def validate!
+  #   raise EMPTY_NAME_ERROR if name.empty?
+  #   raise INVALID_NAME_ERROR if name.length < 3
+  # end
 end
