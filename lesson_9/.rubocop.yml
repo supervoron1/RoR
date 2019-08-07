@@ -17,6 +17,9 @@ Metrics/ClassLength:
   Exclude:
     - main.rb
 
+Metrics/AbcSize:
+  Max: 20
+
 Naming/PredicateName:
   Enabled: false
 

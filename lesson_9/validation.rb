@@ -11,13 +11,11 @@ module Validation
 
     def validate(attr_name, type, *attributes)
       @validators ||= []
-      @validators << {attr_name: attr_name, type: type, attributes: attributes}
-
+      @validators << { attr_name: attr_name, type: type, attributes: attributes }
     end
   end
 
   module InstanceMethods
-
     def validate!
       self.class.validators.each do |validation|
         value = instance_variable_get("@#{validation[:attr_name]}")
