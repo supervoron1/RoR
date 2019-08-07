@@ -9,9 +9,9 @@ class Station
 
   include InstanceCounter
   include Validation
-  attr_reader :name, :trains
 
-  validate :name, :presence
+  attr_reader :name, :trains
+  validate :name, :validate_presence
 
   @@stations = []
 
@@ -50,10 +50,10 @@ class Station
     trains.select { |train| train.type == type }.length
   end
 
-  protected
+  # protected
 
-  def validate!
-    raise EMPTY_NAME_ERROR if name.empty?
-    raise INVALID_NAME_ERROR if name.length < 3
-  end
+  # def validate!
+  #   raise EMPTY_NAME_ERROR if name.empty?
+  #   raise INVALID_NAME_ERROR if name.length < 3
+  # end
 end

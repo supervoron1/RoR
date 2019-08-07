@@ -35,16 +35,16 @@ module Validation
 
     private
 
-    def presence(value)
+    def validate_presence(value)
       raise "Значение атрибута #{value} не может быть nil" if value.nil?
       raise "Значение атрибута #{value} не может быть пустой строкой" if value.strip.empty?
     end
 
-    def format(value, format)
+    def validate_format(value, format)
       raise "Значение атрибута #{value} не соответствует формату #{format}" if value !~ format
     end
 
-    def type(value, type)
+    def validate_type(value, type)
       raise "Значение атрибута #{value} не соответствует классу #{type}" unless value.is_a?(type)
     end
   end
