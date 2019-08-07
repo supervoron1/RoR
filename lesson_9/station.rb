@@ -6,12 +6,14 @@ require_relative "validation"
 class Station
   EMPTY_NAME_ERROR = "Станции не присвоено имя"
   INVALID_NAME_ERROR = "Слишком короткое имя станции. Должно быть не менее 3 символов"
+  STATION_NAME_FORMAT = /^.{3,}$/i
 
   include InstanceCounter
   include Validation
 
   attr_reader :name, :trains
   validate :name, :validate_presence
+  validate :name, :validate_format, STATION_NAME_FORMAT
 
   @@stations = []
 
