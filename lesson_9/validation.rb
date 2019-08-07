@@ -22,6 +22,9 @@ module Validation
         attr_value = instance_variable_get("@#{attr_name}")
         validations.each do |validation|
           send(validation[:type], attr_value, *validation[:attributes])
+          # По ТЗ в тип передается :presence/:format/:type
+          # Нужно собрать название метода:
+          # method_name = "validate_#{validation[:type]}"
         end
       end
     end
@@ -37,15 +40,18 @@ module Validation
 
     def validate_presence(value)
       raise "Значение атрибута #{value} не может быть nil" if value.nil?
-      raise "Значение атрибута #{value} не может быть пустой строкой" if value.strip.empty?
+      # Нужно наверно имя атрибута передавать и выводить
+      # "Значение атрибута #{attr_name}..."
+
+      raise "Значение атрибута #{attr_name} не может быть пустой строкой" if attr_name.strip.empty?
     end
 
-    def validate_format(value, format)
-      raise "Значение атрибута #{value} не соответствует формату #{format}" if value !~ format
+    def validate_format(attr_name, format)
+      raise "Значение атрибута #{attr_name} не соответствует формату #{format}" if attr_name !~ format
     end
 
-    def validate_type(value, type)
-      raise "Значение атрибута #{value} не соответствует классу #{type}" unless value.is_a?(type)
+    def validate_type(attr_name, type)
+      raise "Значение атрибута #{attr_name} не соответствует классу #{type}" unless attr_name.is_a?(type)
     end
   end
 end
