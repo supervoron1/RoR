@@ -14,8 +14,8 @@ class Train
   TRAIN_NUM_FORMAT = /^[0-9a-zа-я]{3}-?[0-9a-zа-я]{2}$/i
   TRAIN_NUM_FORMAT_ERROR = "Номер поезда введен в неверном формате (xxx-xx)."
 
-  validate :number, :validate_presence
-  validate :number, :validate_format, TRAIN_NUM_FORMAT
+  # validate :number, :validate_presence
+  # validate :number, :validate_format, TRAIN_NUM_FORMAT
 
   @@trains = {}
 
@@ -99,9 +99,9 @@ class Train
 
   protected
 
-  # def validate!
-  #   raise TRAIN_NUM_FORMAT_ERROR if number !~ TRAIN_NUM_FORMAT
-  # end
+  def validate!
+    raise TRAIN_NUM_FORMAT_ERROR if number !~ TRAIN_NUM_FORMAT
+  end
 
   def next_station
     @route.stations[@current_station_index + 1]

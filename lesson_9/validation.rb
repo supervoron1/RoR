@@ -38,8 +38,8 @@ module Validation
 
     private
 
-    def validate_presence(value)
-      raise "Значение атрибута #{value} не может быть nil" if value.nil?
+    def validate_presence(attr_name)
+      raise "Значение атрибута #{attr_name} не может быть nil" if attr_name.nil?
       # Нужно наверно имя атрибута передавать и выводить
       # "Значение атрибута #{attr_name}..."
 
